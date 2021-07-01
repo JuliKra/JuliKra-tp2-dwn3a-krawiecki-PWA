@@ -9,11 +9,22 @@ else {
 }
 
 window.addEventListener('offline', event => {
-  document.querySelector('body').classList.add('offline');
-  main.innerHTML = "La aplicacion esta offline!"
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
+    }).catch(function() {
+      return caches.match('/offline.html');
+    })
+  );
 });
 
+
 window.addEventListener('online', event => {
-  document.querySelector('body').classList.remove('offline');
-  openSoccerApi();
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
+    }).catch(function() {
+      return caches.match('/index.html');
+    })
+  );
 });
